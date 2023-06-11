@@ -1,35 +1,111 @@
+import asyncio
 import socket
 import sys
-import time
 
-socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print('Socket Client 创建成功')
 
-HOST = '192.168.31.177'
-PORT = 9592
+class Signaler:
+    """
+    遥控器
+    发送 socket、接收 socket
+    前进、后退、左转、右转
+    """
 
-try:
-    socket_client.connect((HOST, PORT))
-except socket.error as msg:
-    print('Socket Client 连接失败，错误代码：' + str(msg[0]) + '，错误信息：' + msg[1])
-    sys.exit()
+    def __init__(self, host, port):
+        self.HOST = host
+        self.PORT = port
+        self.socket_client = socket.socket(
+                socket.AF_INET,
+                socket.SOCK_STREAM
+            )
+        self.socket_client.connect(
+                (self.HOST, self.PORT)
+            )
+        print(self.socket_client)
 
-print('Socket Client 连接成功')
+    # def connect(self) -> object:
+    #     try:
+    #         socket_client = socket.socket(
+    #             socket.AF_INET,
+    #             socket.SOCK_STREAM
+    #         ).connect(
+    #             (self.HOST, self.PORT)
+    #         )
+    #         print('Socket Client 连接成功')
+    #         return socket_client
+    #     except socket.error as msg:
+    #         print(
+    #             'Socket 连接失败，错误代码：' + str(msg[0]) + '，错误信息：' + msg[
+    #                 1])
+    #         sys.exit()
 
-for i in range(5):
-    msg = f'客户端请求连接 {i}'.encode('utf-8')
-    socket_client.send(msg)
-    print('Socket Client 发出消息')
-    data = socket_client.recv(1024).decode('utf-8')
-    print('Socket Client 收到消息：' + data)
-    time.sleep(1)
+    async def send(self, cmd: str):
+        self.socket_client.send(cmd.encode('utf-8'))
+        print('Socket Client 发出消息')
+        data_reply = self.socket_client.recv(1024).decode('utf-8')
+        print('Socket Client 收到消息：' + data_reply)
+        return data_reply
 
-# 发出关闭连接请求
-socket_client.send('888close'.encode('utf-8'))
-print('Socket Client 发出关闭连接请求')
-close_data = socket_client.recv(1024).decode('utf-8')
-print('Socket Client 收到关闭连接请求：' + close_data)
+    async def receive(self):
+        """
+        开一个线程，持续接收 服务端消息
+        :return:
+        """
+        pass
 
-if close_data == 'ok_close':
-    print('Socket Client 关闭连接')
-    socket_client.close()
+    async def forward(self):
+        """
+        前进
+        :return:
+        """
+        result = await self.send('forward')
+        return result
+
+    async def backward(self):
+        """
+        后退
+        :return:
+        """
+        result = await self.send('backward')
+        return result
+
+    async def turn_left(self):
+        """
+        左转
+        :return:
+        """
+        result = await self.send('turn_left')
+        return result
+
+    async def turn_right(self):
+        """
+        右转
+        :return:
+        """
+        result = await self.send('turn_right')
+        return result
+
+    async def close(self):
+        """
+        关闭连接
+        :return: bool
+        """
+        result = await self.send('888close')
+        if result == 'ok_close':
+            print('Socket Client 关闭连接')
+            self.socket_client.close()
+            return True
+        else:
+            print('Socket Client 关闭连接失败')
+            return False
+
+
+# if __name__ == '__main__':
+#     my_control = Signaler(host='119.29.143.178', port=9592)
+#
+#     for i in range(200):
+#         print(i)
+#         asyncio.run(my_control.forward(i))
+#         asyncio.run(my_control.backward(i))
+#         asyncio.run(my_control.turn_left(i))
+#         asyncio.run(my_control.turn_right(i))
+

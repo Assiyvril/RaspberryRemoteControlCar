@@ -24,7 +24,7 @@ conn, addr = socket_server.accept()
 
 while True:
 
-    print('Socket Server 检测到客户端链接 连接地址：' + addr[0] + '：' + str(addr[1]))
+    # print('Socket Server 检测到客户端链接 连接地址：' + addr[0] + '：' + str(addr[1]))
     data = conn.recv(1024).decode('utf-8')
     print('Socket Server 收到客户端消息：' + data)
     if data == '888close':
