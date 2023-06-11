@@ -1,6 +1,4 @@
-import asyncio
 import socket
-import sys
 
 
 class Signaler:
@@ -21,22 +19,6 @@ class Signaler:
                 (self.HOST, self.PORT)
             )
         print(self.socket_client)
-
-    # def connect(self) -> object:
-    #     try:
-    #         socket_client = socket.socket(
-    #             socket.AF_INET,
-    #             socket.SOCK_STREAM
-    #         ).connect(
-    #             (self.HOST, self.PORT)
-    #         )
-    #         print('Socket Client 连接成功')
-    #         return socket_client
-    #     except socket.error as msg:
-    #         print(
-    #             'Socket 连接失败，错误代码：' + str(msg[0]) + '，错误信息：' + msg[
-    #                 1])
-    #         sys.exit()
 
     async def send(self, cmd: str):
         self.socket_client.send(cmd.encode('utf-8'))
@@ -97,15 +79,3 @@ class Signaler:
         else:
             print('Socket Client 关闭连接失败')
             return False
-
-
-# if __name__ == '__main__':
-#     my_control = Signaler(host='119.29.143.178', port=9592)
-#
-#     for i in range(200):
-#         print(i)
-#         asyncio.run(my_control.forward(i))
-#         asyncio.run(my_control.backward(i))
-#         asyncio.run(my_control.turn_left(i))
-#         asyncio.run(my_control.turn_right(i))
-

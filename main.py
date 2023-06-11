@@ -6,7 +6,7 @@
 
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
-    from control import Control
+    from client.control import Control
 
     my_control = Control(
         host='119.29.143.178',

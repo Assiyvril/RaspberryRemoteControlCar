@@ -1,6 +1,6 @@
 import asyncio
 
-from socket_client import Signaler
+from signaler import Signaler
 
 
 class Control:
